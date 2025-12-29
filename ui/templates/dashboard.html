@@ -1,0 +1,118 @@
+{{template "base.html" .}}
+
+{{define "content"}}
+<h1 class="page-title">Dashboard</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Queues</div>
+        <div class="stat-value primary">{{.Stats.TotalQueues}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Pending Tasks</div>
+        <div class="stat-value warning">{{.Stats.TotalPending}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Tasks</div>
+        <div class="stat-value success">{{.Stats.TotalActive}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Scheduled Tasks</div>
+        <div class="stat-value primary">{{.Stats.TotalScheduled}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Retry Queue</div>
+        <div class="stat-value warning">{{.Stats.TotalRetry}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Archived (Failed)</div>
+        <div class="stat-value danger">{{.Stats.TotalArchived}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value success">{{.Stats.TotalCompleted}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Servers</div>
+        <div class="stat-value success">{{.Stats.ActiveServers}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Workers</div>
+        <div class="stat-value success">{{.Stats.ActiveWorkers}}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Queues Overview</div>
+    <div class="card-body">
+        {{if .Queues}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Queue</th>
+                    <th>Pending</th>
+                    <th>Active</th>
+                    <th>Scheduled</th>
+                    <th>Retry</th>
+                    <th>Archived</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Queues}}
+                <tr>
+                    <td><a href="/queues/{{.Name}}" class="queue-link">{{.Name}}</a></td>
+                    <td>{{.Pending}}</td>
+                    <td>{{.Active}}</td>
+                    <td>{{.Scheduled}}</td>
+                    <td>{{.Retry}}</td>
+                    <td>{{.Archived}}</td>
+                    <td>
+                        {{if .Paused}}
+                        <span class="badge badge-warning">Paused</span>
+                        {{else}}
+                        <span class="badge badge-success">Active</span>
+                        {{end}}
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="empty-state">
+            No queues found. Enqueue some tasks to get started!
+        </div>
+        {{end}}
+    </div>
+</div>
+
+{{if .Servers}}
+<div class="card">
+    <div class="card-header">Active Servers</div>
+    <div class="card-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Host</th>
+                    <th>PID</th>
+                    <th>Status</th>
+                    <th>Concurrency</th>
+                    <th>Active Workers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Servers}}
+                <tr>
+                    <td>{{.Host}}</td>
+                    <td>{{.PID}}</td>
+                    <td><span class="badge badge-success">{{.Status}}</span></td>
+                    <td>{{.Concurrency}}</td>
+                    <td>{{.ActiveWorkerCount}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
+{{end}}

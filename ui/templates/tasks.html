@@ -1,0 +1,99 @@
+{{template "base.html" .}}
+
+{{define "content"}}
+<h1 class="page-title">Queue: {{.Queue.Name}}</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value warning">{{.Queue.Pending}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active</div>
+        <div class="stat-value success">{{.Queue.Active}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Scheduled</div>
+        <div class="stat-value primary">{{.Queue.Scheduled}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Retry</div>
+        <div class="stat-value warning">{{.Queue.Retry}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Archived</div>
+        <div class="stat-value danger">{{.Queue.Archived}}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value success">{{.Queue.Completed}}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Tasks</div>
+    <div class="card-body">
+        <div class="tabs">
+            <a href="/queues/{{.Queue.Name}}?state=pending" class="tab {{if eq .State "pending"}}active{{end}}">
+                Pending ({{.Queue.Pending}})
+            </a>
+            <a href="/queues/{{.Queue.Name}}?state=active" class="tab {{if eq .State "active"}}active{{end}}">
+                Active ({{.Queue.Active}})
+            </a>
+            <a href="/queues/{{.Queue.Name}}?state=scheduled" class="tab {{if eq .State "scheduled"}}active{{end}}">
+                Scheduled ({{.Queue.Scheduled}})
+            </a>
+            <a href="/queues/{{.Queue.Name}}?state=retry" class="tab {{if eq .State "retry"}}active{{end}}">
+                Retry ({{.Queue.Retry}})
+            </a>
+            <a href="/queues/{{.Queue.Name}}?state=archived" class="tab {{if eq .State "archived"}}active{{end}}">
+                Archived ({{.Queue.Archived}})
+            </a>
+            <a href="/queues/{{.Queue.Name}}?state=completed" class="tab {{if eq .State "completed"}}active{{end}}">
+                Completed ({{.Queue.Completed}})
+            </a>
+        </div>
+
+        {{if .Tasks}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Type</th>
+                    <th>Payload</th>
+                    <th>Retried</th>
+                    {{if or (eq .State "scheduled") (eq .State "retry")}}
+                    <th>Next Run</th>
+                    {{end}}
+                    {{if or (eq .State "archived") (eq .State "retry")}}
+                    <th>Last Error</th>
+                    {{end}}
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Tasks}}
+                <tr>
+                    <td><code>{{.ID}}</code></td>
+                    <td><strong>{{.Type}}</strong></td>
+                    <td class="text-sm"><code>{{.Payload}}</code></td>
+                    <td>{{.Retried}}/{{.MaxRetry}}</td>
+                    {{if or (eq $.State "scheduled") (eq $.State "retry")}}
+                    <td class="text-sm">{{.NextRunAt.Format "2006-01-02 15:04:05"}}</td>
+                    {{end}}
+                    {{if or (eq $.State "archived") (eq $.State "retry")}}
+                    <td class="text-sm text-muted">{{.LastError}}</td>
+                    {{end}}
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="empty-state">
+            No {{.State}} tasks in this queue.
+        </div>
+        {{end}}
+    </div>
+</div>
+
+<a href="/queues" class="btn btn-primary">← Back to Queues</a>
+{{end}}

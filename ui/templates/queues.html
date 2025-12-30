@@ -1,0 +1,89 @@
+{{template "base.html" .}}
+
+{{define "content"}}
+<h1 class="page-title">Queues</h1>
+
+<div class="card">
+    <div class="card-body">
+        {{if .Queues}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Queue Name</th>
+                    <th>Pending</th>
+                    <th>Active</th>
+                    <th>Scheduled</th>
+                    <th>Retry</th>
+                    <th>Archived</th>
+                    <th>Completed</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Queues}}
+                <tr>
+                    <td><a href="/queues/{{.Name}}" class="queue-link"><strong>{{.Name}}</strong></a></td>
+                    <td>
+                        {{if gt .Pending 0}}
+                        <span class="badge badge-warning">{{.Pending}}</span>
+                        {{else}}
+                        <span class="text-muted">0</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        {{if gt .Active 0}}
+                        <span class="badge badge-success">{{.Active}}</span>
+                        {{else}}
+                        <span class="text-muted">0</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        {{if gt .Scheduled 0}}
+                        <span class="badge badge-primary">{{.Scheduled}}</span>
+                        {{else}}
+                        <span class="text-muted">0</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        {{if gt .Retry 0}}
+                        <span class="badge badge-warning">{{.Retry}}</span>
+                        {{else}}
+                        <span class="text-muted">0</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        {{if gt .Archived 0}}
+                        <span class="badge badge-danger">{{.Archived}}</span>
+                        {{else}}
+                        <span class="text-muted">0</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        {{if gt .Completed 0}}
+                        <span class="badge badge-success">{{.Completed}}</span>
+                        {{else}}
+                        <span class="text-muted">0</span>
+                        {{end}}
+                    </td>
+                    <td class="text-muted">{{add .Pending (add .Active (add .Scheduled (add .Retry (add .Archived .Completed))))}}</td>
+                    <td>
+                        {{if .Paused}}
+                        <span class="badge badge-warning">Paused</span>
+                        {{else}}
+                        <span class="badge badge-success">Active</span>
+                        {{end}}
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="empty-state">
+            <p>No queues found.</p>
+            <p class="text-sm text-muted">Enqueue some tasks to see queues here.</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

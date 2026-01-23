@@ -228,4 +228,4 @@ go run ./ui
 
 ## License
 
-MIT License - Based on [hibiken/asynq](https://github.com/hibiken/asynq)
+MIT License - 
